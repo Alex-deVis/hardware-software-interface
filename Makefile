@@ -5,14 +5,13 @@ build:
 	docker build -t $(IMG_NAME) .
 
 # In case you receive "Too many open files - Failed to initialize inotify" error,
-# increase the inotify watch limit:
-# echo 256 | sudo tee /proc/sys/fs/inotify/max_user_instances
-serve: build
-	docker run --rm -p 4000:4000 -v $$PWD:/usr/src/app $(IMG_NAME)
+# increase the inotify watch limit: echo 256 | sudo tee /proc/sys/fs/inotify/max_user_instances
+serve: build stop
+	docker run --rm --name $(CONT_NAME) -p 4000:4000 \
+		-v $$PWD:/base/app -u $(shell id -u):$(shell id -g) $(IMG_NAME)
 
 stop:
-	@docker ps -q --filter "name=$(CONT_NAME)" | grep -q . && docker stop $(CONT_NAME) \
-	|| echo "No running container to stop."
+	@docker stop $(CONT_NAME) 2>/dev/null || true
 
 clean: stop
 	docker rmi $(IMG_NAME)
