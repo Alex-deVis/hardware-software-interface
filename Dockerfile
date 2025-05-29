@@ -1,4 +1,4 @@
-FROM ruby:3.2
+FROM ruby:3.4.4-slim
 
 RUN apt-get update && apt-get install -y \
     git \
@@ -6,11 +6,12 @@ RUN apt-get update && apt-get install -y \
     zlib1g-dev \
     && rm -rf /var/lib/apt/lists/*
 
-WORKDIR /usr/src/app
+WORKDIR /usr/src/
 
-COPY Gemfile Gemfile.lock ./
-RUN gem install bundler:2.5.23 && bundle install
+COPY Gemfile ./
+RUN gem install bundler:2.6.9 && bundle install
 
 EXPOSE 4000
 
-CMD ["bundle", "exec", "jekyll", "serve", "--host", "0.0.0.0"]
+# Expect the Jekyll site to be in /usr/src/app
+CMD ["bundle", "exec", "jekyll", "serve", "--host", "0.0.0.0", "-s", "/usr/src/app"]
