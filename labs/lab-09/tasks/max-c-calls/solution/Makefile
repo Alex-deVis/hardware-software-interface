@@ -9,7 +9,7 @@ ASMFLAGS = -f elf32
 all: main
 
 main: main.o max.o
-	$(CC) $(LDFLAGS) -m32 -o $@ $^
+	$(CC) $(LDFLAGS) $(CFLAGS) -o $@ $^
 
 max.o: max.asm
 	$(ASM) $(ASMFLAGS) -o $@ $<
